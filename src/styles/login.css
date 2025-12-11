@@ -1,0 +1,52 @@
+.login-root{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  background:linear-gradient(180deg,#f8fafc,#eef2ff);
+  padding:0 48px 0 24px;
+  gap:24px;
+  position:relative;
+  overflow:hidden;
+}
+
+.login-image{position:fixed;inset:0;z-index:0;display:block}
+.login-image img{width:100%;height:100%;object-fit:cover;display:block}
+
+.login-box{
+  position:relative;
+  z-index:1;
+  width:25vw;
+  min-width:320px;
+  max-width:420px;
+  padding:10px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  font-family:'Poppins',sans-serif;
+  background:transparent;
+  border-radius:8px;
+  color:#0255f1;
+  margin-right:120px;
+}
+
+.login-title{margin:0;font-size:1.6rem;text-align:left}
+
+.login-label{display:flex;flex-direction:column;font-size:1rem;color:#0255f1}
+.login-input{padding:12px 14px;border-radius:8px;margin-top:8px;border:0;background:rgba(255,255,255,0.12);color:#0255f1}
+.login-actions{display:flex;justify-content:center;margin-top:8px}
+.login-btn{background:#0255f1;color:#ffffff;padding:10px 18px;border-radius:8px;border:0;cursor:pointer}
+.login-error{color:#ffdddd;background:transparent;padding:8px;border-radius:6px}
+
+.login-box .login-input::placeholder{color:rgba(2,85,241,0.5)}
+
+/* ensure inputs and labels remain readable on image */
+.login-box label, .login-box h2 {text-shadow:0 1px 2px rgba(0,0,0,0.6)}
+
+@media (max-width:900px){
+  .login-root{flex-direction:column;padding:0 16px}
+  .login-image{position:fixed;inset:0}
+  .login-box{width:92%;max-width:720px;margin:16px auto;background:rgba(255,255,255,0.92);border-radius:12px;color:#0255f1}
+  .login-input{background:rgba(255,255,255,0.95);color:#0255f1}
+  .login-box .login-input::placeholder{color:rgba(2,85,241,0.5)}
+}

@@ -1,0 +1,113 @@
+.qrcode {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrcode__container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 3rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+.qrcode__title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.qrcode__info {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.qrcode__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.qrcode__card {
+  background: #f8f9fa;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qrcode__card-title {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.qrcode__code-container {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+}
+
+.qrcode__code-container canvas {
+  width: 100%;
+  height: auto;
+  max-width: 256px;
+}
+
+.qrcode__download-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(180deg,#0255f1,#0b2a44);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.qrcode__download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.qrcode__download-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .qrcode {
+    padding: 1rem;
+  }
+
+  .qrcode__container {
+    padding: 1.5rem;
+  }
+
+  .qrcode__title {
+    font-size: 1.5rem;
+  }
+
+  .qrcode__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .qrcode__code-container canvas {
+    max-width: 200px;
+  }
+}

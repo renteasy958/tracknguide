@@ -1,0 +1,142 @@
+.qrform {
+  padding: 2rem;
+  background: #f0f4ff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.qrform__container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.qrform__title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.qrform__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.qrform__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qrform__label {
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.qrform__input,
+.qrform__select {
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.qrform__input:focus,
+.qrform__select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.qrform__info-box {
+  background: #f0f4ff;
+  border: 2px solid #667eea;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.qrform__info-text {
+  color: #333;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.qrform__submit {
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.qrform__submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.qrform__submit:active {
+  transform: translateY(0);
+}
+
+.qrform__success {
+  text-align: center;
+  padding: 2rem;
+}
+
+.qrform__success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  background: #4caf50;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.qrform__success-title {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.qrform__success-message {
+  color: #666;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .qrform {
+    padding: 1rem;
+  }
+
+  .qrform__container {
+    padding: 1.5rem;
+  }
+
+  .qrform__title {
+    font-size: 1.5rem;
+  }
+}

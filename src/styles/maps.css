@@ -1,0 +1,31 @@
+.maps-pulse{
+  padding:18px;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+.maps-pulse__title{
+  font-size:1.25rem;
+  margin:0 0 12px 0;
+}
+
+.maps-pulse__grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.maps-pulse__tile{
+  background:#fff;
+  padding:14px;
+  border-radius:10px;
+  box-shadow:0 6px 14px rgba(2,6,23,0.06);
+}
+
+@media (max-width:900px){
+  .maps-pulse__grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:600px){
+  .maps-pulse__grid{grid-template-columns:1fr}
+}

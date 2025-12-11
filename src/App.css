@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+html, body, #root { height: 100%; }
+
+.app-root{display:flex;flex-direction:row;height:100vh;width:100vw;font-family:'Poppins',sans-serif;color:#0f172a}
+.app-main{flex:1;overflow-y:auto;height:100vh}
+
+/* small reset */
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9}
+

@@ -1,0 +1,59 @@
+.home{
+  padding:24px;
+  width:100%;
+  height:100%;
+  margin:0;
+  background: #ffffff;
+  color: #0b61ff; /* primary blue */
+  box-sizing: border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+.home__hero{
+  margin-bottom:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+.home__title{
+  font-size:3rem;
+  margin:0;
+  color:#0255f1;
+  text-align:center;
+}
+
+.home__logo{width:120px;height:120px}
+.home__logo img{width:100%;height:auto;border-radius:8px;display:block}
+
+.home__meta{width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px}
+.home__date{font-size:0.95rem;color:#0b61ff;margin-bottom:0;text-align:center}
+.home__counts{display:flex;flex-direction:row;gap:20px;align-items:center}
+
+.home__count{background:#ffffff;padding:18px 22px;border-radius:14px;display:flex;flex-direction:row;align-items:center;gap:12px;min-width:160px;border:1px solid rgba(11,97,255,0.12)}
+.home__count-body{display:flex;flex-direction:column;align-items:center}
+.home__count-num{font-weight:900;font-size:3rem;color:#0b61ff;line-height:1}
+.home__count-label{font-size:1rem;color:#0b61ff;margin-top:6px}
+
+.home__count-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin:0}
+.home__icon{width:100%;height:100%;fill:#0b61ff}
+
+.home__loglist{margin-top:18px}
+.home__logwrap{overflow-x:auto}
+.home__table{width:100%;border-collapse:collapse;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(11,97,255,0.06)}
+.home__table thead{background:rgba(11,97,255,0.05)}
+.home__table th, .home__table td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(11,97,255,0.06);color:#0b61ff}
+.home__table tr:last-child td{border-bottom:0}
+
+@media (max-width:800px){
+  .home{padding:16px}
+  .home__title{font-size:1.2rem}
+  .home__counts{gap:8px}
+  .home__count{min-width:110px;padding:12px;flex-direction:column}
+  .home__count-body{align-items:center}
+  .home__count-num{font-size:1.8rem}
+  .home__table th, .home__table td{padding:10px}
+}
+
+

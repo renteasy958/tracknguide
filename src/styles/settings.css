@@ -1,0 +1,40 @@
+.settings-glow{
+  padding:18px;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+.settings-glow__title{
+  font-size:1.25rem;
+  margin:0 0 12px 0;
+}
+
+.settings-glow__grid{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.settings-glow__row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.settings-glow__logout{
+  padding:8px 14px;
+  background:#b91c1c;
+  color:#fff;
+  border:0;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.settings-glow__logout:hover{
+  background:#991b1b;
+}
+
+@media (max-width:700px){
+  .settings-glow{padding:12px}
+}
