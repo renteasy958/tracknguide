@@ -1,11 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import '../styles/qrcode.css';
 
 export default function QRCode() {
-  const baseUrl = window.location.origin;
-  const timeInUrl = `${baseUrl}/#qrform-timein`;
-  const timeOutUrl = `${baseUrl}/#qrform-timeout`;
+  const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Update date at midnight
+  useEffect(() => {
+    const updateDate = () => setCurrentDate(new Date());
+    
+    // Calculate milliseconds until next midnight
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msUntilMidnight = tomorrow - now;
+    
+    // Set timer to update at midnight
+    const midnightTimer = setTimeout(() => {
+      updateDate();
+      // Set interval to update daily
+      const dailyInterval = setInterval(updateDate, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+    
+    return () => clearTimeout(midnightTimer);
+  }, []);
+  
+  const getTodayString = () => {
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const dateParam = getTodayString();
+  const timeInUrl = `https://tracksandguide.web.app/#qr-timein?date=${dateParam}`;
+  const timeOutUrl = `https://tracksandguide.web.app/#qr-timeout?date=${dateParam}`;
 
   const downloadQR = (ref, filename) => {
     const canvas = ref.current.querySelector('canvas');
@@ -26,6 +55,12 @@ export default function QRCode() {
         
         <div className="qrcode__info">
           <p>Users can scan these QR codes with their phones to fill up their Time In or Time Out</p>
+          <p style={{ marginTop: '10px', fontWeight: 'bold', color: '#1976d2' }}>
+            Valid for: {currentDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
+          <p style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
+            ⚠️ QR codes expire at midnight and must be regenerated daily
+          </p>
         </div>
 
         <div className="qrcode__grid">
@@ -41,7 +76,7 @@ export default function QRCode() {
             </div>
             <button 
               className="qrcode__download-btn"
-              onClick={() => downloadQR(timeInRef, 'TimeIn-QRCode.png')}
+              onClick={() => downloadQR(timeInRef, `TimeIn-QRCode-${getTodayString()}.png`)}
             >
               Download QR Code
             </button>
@@ -59,7 +94,7 @@ export default function QRCode() {
             </div>
             <button 
               className="qrcode__download-btn"
-              onClick={() => downloadQR(timeOutRef, 'TimeOut-QRCode.png')}
+              onClick={() => downloadQR(timeOutRef, `TimeOut-QRCode-${getTodayString()}.png`)}
             >
               Download QR Code
             </button>

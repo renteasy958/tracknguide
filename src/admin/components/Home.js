@@ -76,9 +76,9 @@ export default function Home({ visits = [] }){
                 <tr key={i} className="home__row">
                   <td>{v.name}</td>
                   <td>{v.type}</td>
-                  <td>{v.timeIn}</td>
-                  <td>{v.timeOut || '-'}</td>
-                  <td>{v.room}</td>
+                  <td>{v.timeInFormatted || v.timeIn || '-'}</td>
+                  <td>{v.timeOutFormatted || v.timeOut || '-'}</td>
+                  <td>{v.room || '-'}</td>
                 </tr>
               ))}
             </tbody>

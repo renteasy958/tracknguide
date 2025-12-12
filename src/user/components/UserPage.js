@@ -5,6 +5,7 @@ import TypeSelection from './TypeSelection';
 import TeacherForm from './TeacherForm';
 import StudentForm from './StudentForm';
 import VisitorForm from './VisitorForm';
+import TimeOutForm from './TimeOutForm';
 import RoomSelection from './RoomSelection';
 import RoomMap from './RoomMap';
 import '../styles/userPage.css';
@@ -16,6 +17,23 @@ function UserPage() {
   const [visitRecorded, setVisitRecorded] = useState(false);
 
   useEffect(() => {
+    // Check for QR code scan (hash-based routing) FIRST before checking localStorage
+    const hash = window.location.hash;
+    
+    // If scanning QR code for time out, show time out form directly
+    if (hash.includes('qr-timeout')) {
+      setStep('qr-timeout');
+      return;
+    }
+    
+    // If scanning QR code for time in, proceed with normal flow
+    if (hash.includes('qr-timein')) {
+      // Clear hash to avoid confusion
+      window.history.replaceState(null, '', window.location.pathname);
+      setStep('type-selection');
+      return;
+    }
+    
     // Check if user data exists in localStorage
     const savedData = localStorage.getItem('userData');
     const lastVisitTime = localStorage.getItem('lastVisitTime');
@@ -126,6 +144,15 @@ function UserPage() {
     setSelectedRoom(null);
     setVisitRecorded(false);
     setStep('type-selection');
+    // Clear hash
+    window.history.replaceState(null, '', window.location.pathname);
+  };
+
+  const handleTimeOutComplete = (result) => {
+    if (result.success) {
+      setStep('timeout-success');
+      setUserData({ name: result.name, timeOut: result.timeOut });
+    }
   };
 
   if (step === 'loading') {
@@ -139,6 +166,27 @@ function UserPage() {
 
   if (step === 'type-selection') {
     return <TypeSelection onSelectType={handleSelectType} />;
+  }
+
+  if (step === 'qr-timeout') {
+    return <TimeOutForm onComplete={handleTimeOutComplete} />;
+  }
+
+  if (step === 'timeout-success') {
+    return (
+      <div className="user-page-success">
+        <div className="success-box">
+          <div className="success-icon">✓</div>
+          <h2 className="success-title">Your time out is recorded</h2>
+          <p className="success-message">Goodbye, {userData.name}!</p>
+          <p className="success-message" style={{ marginTop: '10px', fontSize: '0.9em' }}>Time out recorded at {userData.timeOut}.</p>
+          
+          <button className="reset-btn" onClick={handleReset}>
+            Done
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (step === 'form') {

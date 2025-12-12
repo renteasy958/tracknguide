@@ -194,8 +194,8 @@ export default function History({ visits = [] }) {
                           <tr key={v.id || i} className="home__row">
                             <td>{v.name || v.text || '—'}</td>
                             <td>{v.type || '—'}</td>
-                            <td>{v.timeIn || v.time || '—'}</td>
-                            <td>{v.timeOut || '—'}</td>
+                            <td>{v.timeInFormatted || v.timeIn || v.time || '—'}</td>
+                            <td>{v.timeOutFormatted || v.timeOut || '—'}</td>
                             <td>{v.room || '—'}</td>
                           </tr>
                         ))}
