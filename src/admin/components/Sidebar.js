@@ -28,7 +28,6 @@ export default function Sidebar({ onNavigate, onLogout }){
           <span>Logout</span>
         </button>
       </nav>
-      <div className="sidebar-cedar__foot">v1.0</div>
     </aside>
   );
 }

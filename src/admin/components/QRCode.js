@@ -4,8 +4,8 @@ import '../styles/qrcode.css';
 
 export default function QRCode() {
   const baseUrl = window.location.origin;
-  const timeInUrl = `${baseUrl}/#qrform?type=timein`;
-  const timeOutUrl = `${baseUrl}/#qrform?type=timeout`;
+  const timeInUrl = `${baseUrl}/#qrform-timein`;
+  const timeOutUrl = `${baseUrl}/#qrform-timeout`;
 
   const downloadQR = (ref, filename) => {
     const canvas = ref.current.querySelector('canvas');

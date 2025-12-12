@@ -10,41 +10,14 @@ export default function History({ visits = [] }) {
   const [selectedRole, setSelectedRole] = useState('All');
 
   useEffect(() => {
-    // If parent passed visits, use those first
+    // Use all visits for the calendar view
     if (visits && visits.length > 0) {
       setHistory(visits);
       return;
     }
 
-    // Otherwise try reading history from localStorage (common keys), otherwise use sample data
-    try {
-      const raw = localStorage.getItem('history') || localStorage.getItem('historyData');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setHistory(parsed);
-        } else if (typeof parsed === 'object' && parsed !== null) {
-          // If stored as an object of date -> entries, normalize to array
-          const normalized = Object.keys(parsed).flatMap(date => (
-            (parsed[date] || []).map((item, idx) => ({ id: `${date}-${idx}`, date, ...((typeof item === 'string') ? { text: item } : item) }))
-          ));
-          setHistory(normalized);
-        } else {
-          setHistory([]);
-        }
-      } else {
-        // Fallback sample data so UI is visible during development
-        setHistory([
-          { id: 1, date: `${year}-12-11`, name: 'Sample A', type: 'Student', timeIn: '08:12', timeOut: '12:00', room: 'Room 101' },
-          { id: 2, date: `${year}-12-10`, name: 'Sample B', type: 'Visitor', timeIn: '09:05', timeOut: '10:30', room: 'Office' },
-          { id: 3, date: `${year}-12-10`, name: 'Sample C', type: 'Student', timeIn: '07:58', timeOut: '11:30', room: 'Room 204' },
-          { id: 4, date: `${year}-12-09`, name: 'Mr. Jose Perez', type: 'Teacher', timeIn: '08:00', timeOut: '12:00', room: 'Room 201' },
-        ]);
-      }
-    } catch (e) {
-      setHistory([]);
-    }
-  }, [visits, year]);
+    setHistory([]);
+  }, [visits]);
 
   // helpers
   const pad = (n) => String(n).padStart(2, '0');
@@ -55,8 +28,31 @@ export default function History({ visits = [] }) {
   // attempt to extract ISO date (YYYY-MM-DD) from a visit object
   const extractISODate = (v) => {
     if (!v) return null;
-    if (v.date && typeof v.date === 'string' && /\d{4}-\d{2}-\d{2}/.test(v.date)) return v.date.split('T')[0];
-    if (v.createdAt && typeof v.createdAt === 'string' && /\d{4}-\d{2}-\d{2}/.test(v.createdAt)) return v.createdAt.split('T')[0];
+    
+    // First check if date field exists and convert to ISO format
+    if (v.date && typeof v.date === 'string') {
+      // If it's already in ISO format (YYYY-MM-DD)
+      if (/\d{4}-\d{2}-\d{2}/.test(v.date)) {
+        return v.date.split('T')[0];
+      }
+      // If it's in local format like "12/12/2025", convert it
+      try {
+        const dateObj = new Date(v.date);
+        if (!isNaN(dateObj.getTime())) {
+          const y = dateObj.getFullYear();
+          const m = pad(dateObj.getMonth() + 1);
+          const d = pad(dateObj.getDate());
+          return `${y}-${m}-${d}`;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    
+    if (v.createdAt && typeof v.createdAt === 'string' && /\d{4}-\d{2}-\d{2}/.test(v.createdAt)) {
+      return v.createdAt.split('T')[0];
+    }
+    
     // search any string field for ISO date
     for (const val of Object.values(v)) {
       if (typeof val === 'string') {
@@ -75,8 +71,8 @@ export default function History({ visits = [] }) {
     if (iso) yearsSet.add(Number(iso.split('-')[0]));
   });
   if (yearsSet.size === 0) {
-    const ny = now.getFullYear();
-    for (let y = ny - 2; y <= ny + 1; y++) yearsSet.add(y);
+    // Add years from 2025 to 2030
+    for (let y = 2025; y <= 2030; y++) yearsSet.add(y);
   }
   const years = Array.from(yearsSet).sort((a, b) => b - a);
   // apply role filter to history for counting and display

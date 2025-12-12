@@ -1,0 +1,116 @@
+/* Mobile-first Type Selection Styles */
+.type-selection-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+  padding: 20px;
+}
+
+.type-selection-box {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 16px;
+  padding: 32px 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.type-selection-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.type-selection-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0 0 32px 0;
+  text-align: center;
+}
+
+.type-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.type-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.type-btn:active {
+  transform: translateY(-2px);
+}
+
+.type-icon {
+  width: 60px;
+  height: 60px;
+  background: #0255f1;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.type-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: white;
+}
+
+.teacher-btn:hover {
+  border-color: #0255f1;
+  background: #eff6ff;
+}
+
+.student-btn:hover {
+  border-color: #0255f1;
+  background: #eff6ff;
+}
+
+.visitor-btn:hover {
+  border-color: #0255f1;
+  background: #eff6ff;
+}
+
+@media (min-width: 768px) {
+  .type-selection-box {
+    padding: 48px 40px;
+  }
+
+  .type-selection-title {
+    font-size: 2rem;
+  }
+
+  .type-buttons {
+    flex-direction: row;
+  }
+
+  .type-btn {
+    flex: 1;
+  }
+}

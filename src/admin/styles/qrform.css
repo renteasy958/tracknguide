@@ -75,6 +75,16 @@
   margin: 0;
 }
 
+.qrform__error {
+  background: #ffebee;
+  border: 2px solid #f44336;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  color: #c62828;
+  font-size: 1rem;
+}
+
 .qrform__submit {
   padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

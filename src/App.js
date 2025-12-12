@@ -1,27 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 import './App.css';
-import Sidebar from './components/Sidebar';
-import Home from './components/Home';
-import QRCode from './components/QRCode';
-import QRForm from './components/QRForm';
-import History from './components/History';
-import Login from './components/Login';
+import Sidebar from './admin/components/Sidebar';
+import Home from './admin/components/Home';
+import QRCode from './admin/components/QRCode';
+import QRForm from './admin/components/QRForm';
+import History from './admin/components/History';
+import Login from './admin/components/Login';
+import UserPage from './user/components/UserPage';
 
-function App() {
+// Admin Component
+function AdminApp() {
   const [currentPage, setCurrentPage] = useState('home');
-  const [visits, setVisits] = useState([
-    { name: 'Juan Dela Cruz', type: 'Student', timeIn: '08:12', timeOut: '12:00', room: 'Room 101' },
-    { name: 'Maria Santos', type: 'Visitor', timeIn: '09:05', timeOut: '10:30', room: 'Office' },
-    { name: 'Pedro Reyes', type: 'Student', timeIn: '07:58', timeOut: '11:30', room: 'Room 204' },
-    { name: 'Ms. Carla Ramos', type: 'Teacher', timeIn: '08:30', timeOut: '12:15', room: 'Room 101' },
-    { name: 'Anna Lee', type: 'Visitor', timeIn: '10:20', timeOut: '11:10', room: 'Library' }
-  ]);
+  const [visits, setVisits] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
       return !!localStorage.getItem('loggedInUser');
     } catch (e) { return false; }
   });
+
+  // Fetch real-time visits from Firestore
+  useEffect(() => {
+    const q = query(collection(db, 'visits'), orderBy('timeIn', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log('Visits snapshot received, total documents:', snapshot.docs.length);
+      const visitsData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        console.log('Visit document:', doc.id, {
+          name: data.name,
+          timeIn: data.timeIn,
+          timeOut: data.timeOut,
+          timeOutFormatted: data.timeOutFormatted
+        });
+        return {
+          id: doc.id,
+          ...data,
+          timeIn: data.timeInFormatted || new Date(data.timeIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          timeOut: data.timeOut ? (data.timeOutFormatted || new Date(data.timeOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) : '-',
+          room: data.room || '-'
+        };
+      });
+      console.log('Processed visits data:', visitsData);
+      setVisits(visitsData);
+      setLoading(false);
+    }, (error) => {
+      console.error('Error fetching visits:', error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
@@ -40,39 +73,20 @@ function App() {
   };
 
   const handleAddVisit = (visitData) => {
-    if (visitData.timeOut === true) {
-      // Update the last visit with time out
-      const now = new Date();
-      const timeOutStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      setVisits(prevVisits => {
-        const updatedVisits = [...prevVisits];
-        if (updatedVisits.length > 0) {
-          updatedVisits[updatedVisits.length - 1] = {
-            ...updatedVisits[updatedVisits.length - 1],
-            timeOut: timeOutStr
-          };
-        }
-        return updatedVisits;
-      });
-      alert('Time Out recorded successfully!');
-    } else {
-      // Add new visit
-      setVisits(prevVisits => [visitData, ...prevVisits]);
-    }
+    // Visits are now handled by Firebase real-time listener
+    // No need to manually update state
   };
 
-  // Handle hash-based routing
   React.useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1) || 'home';
-      const basePage = hash.split('?')[0];
+      const basePage = hash.split('?')[0].split('-')[0]; // Handle qrform-timeout/qrform-timein
       setCurrentPage(basePage);
     };
 
     window.addEventListener('hashchange', handleHashChange);
     const initialHash = window.location.hash.slice(1) || 'home';
-    const basePage = initialHash.split('?')[0];
+    const basePage = initialHash.split('?')[0].split('-')[0]; // Handle qrform-timeout/qrform-timein
     setCurrentPage(basePage);
 
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -80,6 +94,17 @@ function App() {
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
+  }
+
+  if (loading) {
+    return (
+      <div className="app-root">
+        <Sidebar onNavigate={handleNavigate} onLogout={handleLogout} />
+        <main className="app-main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div>Loading visits...</div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -92,6 +117,20 @@ function App() {
         {currentPage === 'qrform' && <QRForm onAddVisit={handleAddVisit} />}
       </main>
     </div>
+  );
+}
+
+// Main App with Router
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<UserPage />} />
+        <Route path="/user" element={<UserPage />} />
+        <Route path="/admin" element={<AdminApp />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 }
 
