@@ -3,7 +3,8 @@ import '../styles/history.css';
 
 export default function History({ visits = [] }) {
   const [history, setHistory] = useState([]);
-  const [selectedISODate, setSelectedISODate] = useState(null);
+  // Only use one selected day state for calendar
+  const [selectedDay, setSelectedDay] = useState(null);
   const now = new Date();
   const [monthIndex, setMonthIndex] = useState(now.getMonth()); // 0-11, show current month by default
   const [year, setYear] = useState(now.getFullYear());
@@ -84,6 +85,7 @@ export default function History({ visits = [] }) {
 
   // build map of counts per day for the displayed month (from filtered history)
   const countsByDay = {};
+  const calendarData = {};
   filteredHistory.forEach(entry => {
     const iso = extractISODate(entry);
     if (!iso) return;
@@ -91,43 +93,34 @@ export default function History({ visits = [] }) {
     if (Number(y) === year && Number(m) === monthNumber) {
       const day = Number(d);
       countsByDay[day] = (countsByDay[day] || 0) + 1;
+      if (!calendarData[iso]) calendarData[iso] = [];
+      calendarData[iso].push(entry);
     }
   });
 
   const handleDayClick = (day) => {
     const iso = `${year}-${pad(monthNumber)}-${pad(day)}`;
-    setSelectedISODate(prev => (prev === iso ? null : iso));
+    setSelectedDay(prev => (prev === iso ? null : iso));
   };
 
   const handleMonthChange = (e) => {
     const mi = Number(e.target.value);
     setMonthIndex(mi);
-    setSelectedISODate(null);
+    setSelectedDay(null);
   };
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
-    setSelectedISODate(null);
+    setSelectedDay(null);
   };
 
   const handleYearChange = (e) => {
     const y = Number(e.target.value);
     setYear(y);
-    setSelectedISODate(null);
+    setSelectedDay(null);
   };
 
-  const getEntriesForISO = (iso) => {
-    const matches = filteredHistory.filter(h => extractISODate(h) === iso);
-    if (matches.length > 0) return matches;
-    // fallback: if no entries are dated, return all visits so user still sees data
-    if (history.length > 0 && history.every(h => extractISODate(h) === null)) return history.filter(h => {
-      if (!selectedRole || selectedRole === 'All') return true;
-      return (h.type || '').toString().toLowerCase() === selectedRole.toString().toLowerCase();
-    });
-    return [];
-  };
-
-  const selectedEntries = selectedISODate ? getEntriesForISO(selectedISODate) : [];
+  const selectedEntries = selectedDay ? calendarData[selectedDay] || [] : [];
 
   return (
     <section className="history-echo">
@@ -139,7 +132,6 @@ export default function History({ visits = [] }) {
             ))}
           </select>
         </label>
-
         <label className="history-echo__label">Year:
           <select className="history-echo__select" value={year} onChange={handleYearChange}>
             {years.map(y => (
@@ -147,7 +139,6 @@ export default function History({ visits = [] }) {
             ))}
           </select>
         </label>
-
         <label className="history-echo__label">Role:
           <select className="history-echo__select" value={selectedRole} onChange={handleRoleChange}>
             <option value="All">All</option>
@@ -157,57 +148,66 @@ export default function History({ visits = [] }) {
           </select>
         </label>
       </div>
-
       <h2 className="history-echo__title">{monthName} {year}</h2>
-
-      <ul className="history-echo__dates">
+      {/* Calendar header row: Sunday to Saturday */}
+      <div className="history-echo__calendar-header">
+        {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(dayName => (
+          <div key={dayName} className="history-echo__calendar-header-cell">{dayName}</div>
+        ))}
+      </div>
+      <div className="history-echo__calendar-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
+        {/* Empty cells for days before the first of the month */}
+        {Array.from({ length: new Date(year, monthIndex, 1).getDay() }, (_, i) => (
+          <div key={`empty-${i}`} className="history-echo__calendar-cell empty"></div>
+        ))}
+        {/* Calendar dates aligned to days */}
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => (
-          <li key={day} className="history-echo__date-item">
+          <div key={day} className="history-echo__calendar-cell">
             <button
-              className={`history-echo__date-btn ${selectedISODate === `${year}-${pad(monthNumber)}-${pad(day)}` ? 'is-open' : ''}`}
+              className={`history-echo__date-btn ${selectedDay === `${year}-${pad(monthNumber)}-${pad(day)}` ? 'is-open' : ''}`}
               onClick={() => handleDayClick(day)}
             >
               <span>{day}</span>
-              <span>{countsByDay[day] ? `(${countsByDay[day]})` : ''}</span>
+              {countsByDay[day] ? (
+                <span className="history-echo__date-count">{countsByDay[day]}</span>
+              ) : null}
             </button>
-
-            {selectedISODate === `${year}-${pad(monthNumber)}-${pad(day)}` && (
-              <div className="history-echo__day-entries">
-                {selectedEntries.length === 0 && (
-                  <p className="history-echo__empty">No entries for this day.</p>
-                )}
-
-                {selectedEntries.length > 0 && (
-                  <div className="home__logwrap">
-                    <table className="home__table">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Type</th>
-                          <th>Time In</th>
-                          <th>Time Out</th>
-                          <th>Room</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedEntries.map((v, i) => (
-                          <tr key={v.id || i} className="home__row">
-                            <td>{v.name || v.text || '—'}</td>
-                            <td>{v.type || '—'}</td>
-                            <td>{v.timeInFormatted || v.timeIn || v.time || '—'}</td>
-                            <td>{v.timeOutFormatted || v.timeOut || '—'}</td>
-                            <td>{v.room || '—'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
+      {/* Data for selected day below the calendar */}
+      {selectedDay && (
+        <div className="history-echo__day-entries">
+          {selectedEntries.length === 0 ? (
+            <p className="history-echo__empty">No entries for this day.</p>
+          ) : (
+            <div className="home__logwrap">
+              <table className="home__table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Room</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedEntries.map((v, i) => (
+                    <tr key={v.id || i} className="home__row">
+                      <td>{v.name || v.text || '—'}</td>
+                      <td>{v.type || '—'}</td>
+                      <td>{v.timeInFormatted || v.timeIn || v.time || '—'}</td>
+                      <td>{v.timeOutFormatted || v.timeOut || '—'}</td>
+                      <td>{v.room || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }

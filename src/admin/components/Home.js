@@ -6,9 +6,22 @@ export default function Home({ visits = [] }){
   const today = new Date();
   const dateStr = today.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const studentsCount = visits.filter(v => v.type && v.type.toLowerCase() === 'student').length;
-  const visitorsCount = visits.filter(v => v.type && v.type.toLowerCase() === 'visitor').length;
-  const teachersCount = visits.filter(v => v.type && v.type.toLowerCase() === 'teacher').length;
+  // Helper to check if a visit is from today
+  function isToday(visit) {
+    const raw = visit.timeInRaw || visit.timeIn;
+    if (!raw) return false;
+    const visitDate = new Date(raw);
+    return (
+      visitDate.getFullYear() === today.getFullYear() &&
+      visitDate.getMonth() === today.getMonth() &&
+      visitDate.getDate() === today.getDate()
+    );
+  }
+
+  const todayVisits = visits.filter(isToday);
+  const studentsCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'student').length;
+  const visitorsCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'visitor').length;
+  const teachersCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'teacher').length;
   return (
     <section className="home">
       <div className="home__hero">
@@ -72,7 +85,7 @@ export default function Home({ visits = [] }){
               </tr>
             </thead>
             <tbody>
-              {visits.map((v, i) => (
+              {todayVisits.map((v, i) => (
                 <tr key={i} className="home__row">
                   <td>{v.name}</td>
                   <td>{v.type}</td>
