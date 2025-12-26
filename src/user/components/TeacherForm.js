@@ -5,22 +5,43 @@ import '../styles/registrationForm.css';
 
 function TeacherForm({ onComplete }) {
   const [name, setName] = useState('');
+  const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem('userData');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.type === 'teacher') {
+          setAlreadyRegistered(true);
+        }
+      } catch {}
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!name.trim()) {
       alert('Please enter your name');
+      return;
+    }
+    if (!department) {
+      alert('Please select your department');
       return;
     }
 
     setLoading(true);
     try {
       const userId = `teacher_${Date.now()}`;
+
       const userData = {
         id: userId,
         name: name.trim(),
         type: 'teacher',
+        department: department,
         registeredAt: new Date().toISOString()
       };
 
@@ -38,6 +59,16 @@ function TeacherForm({ onComplete }) {
     }
   };
 
+  if (alreadyRegistered) {
+    return (
+      <div className="registration-container">
+        <div className="registration-box">
+          <h2 className="registration-title">Already Registered</h2>
+          <p className="registration-message">You are already registered as a teacher. Please proceed to the next step or logout to register a new user.</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="registration-container">
       <div className="registration-box">
@@ -56,7 +87,21 @@ function TeacherForm({ onComplete }) {
               required
             />
           </div>
-          
+          <div className="form-group">
+            <label htmlFor="department" className="form-label">Department</label>
+            <select
+              id="department"
+              className="form-input"
+              value={department}
+              onChange={e => setDepartment(e.target.value)}
+              disabled={loading}
+              required
+            >
+              <option value="">Select department</option>
+              <option value="College">College</option>
+              <option value="Highschool">Highschool</option>
+            </select>
+          </div>
           <button 
             type="submit" 
             className="form-btn"
@@ -66,7 +111,7 @@ function TeacherForm({ onComplete }) {
           </button>
         </form>
       </div>
-    </div>
+	</div>
   );
 }
 

@@ -46,6 +46,13 @@
 .home__table th, .home__table td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(11,97,255,0.06);color:#0b61ff}
 .home__table tr:last-child td{border-bottom:0}
 
+.home__count.home__count--active {
+  background: #ffffff;
+  border: 2px solid #0b61ff;
+  box-shadow: 0 0 0 2px #ffffff;
+  transition: background 0.2s, border 0.2s, box-shadow 0.2s;
+}
+
 @media (max-width:800px){
   .home{padding:16px}
   .home__title{font-size:1.2rem}

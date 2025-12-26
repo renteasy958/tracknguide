@@ -8,6 +8,19 @@ function StudentForm({ onComplete }) {
   const [year, setYear] = useState('');
   const [course, setCourse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem('userData');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.type === 'student') {
+          setAlreadyRegistered(true);
+        }
+      } catch {}
+    }
+  }, []);
 
   const courses = ['BSIT', 'BSBA', 'BSHM', 'BEED', 'BSED'];
 
@@ -44,6 +57,16 @@ function StudentForm({ onComplete }) {
     }
   };
 
+  if (alreadyRegistered) {
+    return (
+      <div className="registration-container">
+        <div className="registration-box">
+          <h2 className="registration-title">Already Registered</h2>
+          <p className="registration-message">You are already registered as a student. Please proceed to the next step or logout to register a new user.</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="registration-container">
       <div className="registration-box">
@@ -105,7 +128,7 @@ function StudentForm({ onComplete }) {
           </button>
         </form>
       </div>
-    </div>
+	</div>
   );
 }
 

@@ -89,6 +89,7 @@ function UserPage() {
         type: user.type,
         course: user.course || null,
         year: user.year || null,
+        department: user.department || null,
         timeIn: now.toISOString(),
         timeInFormatted: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         date: now.toLocaleDateString(),
@@ -222,6 +223,12 @@ function UserPage() {
               <span className="info-label">Type:</span>
               <span className="info-value">{userData.type}</span>
             </div>
+            {userData.department && (
+              <div className="info-row">
+                <span className="info-label">Department:</span>
+                <span className="info-value">{userData.department}</span>
+              </div>
+            )}
             {userData.course && (
               <div className="info-row">
                 <span className="info-label">Course:</span>
