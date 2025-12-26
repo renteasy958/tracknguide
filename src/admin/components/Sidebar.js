@@ -19,10 +19,7 @@ export default function Sidebar({ onNavigate, onLogout }){
           <AiOutlineHistory className="sidebar-cedar__icon" />
           <span>History</span>
         </a>
-        <a className="sidebar-cedar__link" href="#maps">
-          <AiOutlineEnvironment className="sidebar-cedar__icon" />
-          <span>Maps</span>
-        </a>
+        {/* Maps link removed as requested */}
         <button className="sidebar-cedar__link sidebar-cedar__logout-btn" onClick={onLogout}>
           <AiOutlineSetting className="sidebar-cedar__icon" />
           <span>Logout</span>

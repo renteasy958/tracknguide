@@ -23,32 +23,65 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
   const [qrError, setQrError] = useState('');
   const qrCodeScannerRef = useRef(null);
   const rooms = [
-    { id: 'room_101', name: 'Room 101' },
-    { id: 'room_102', name: 'Room 102' },
-    { id: 'science_lab', name: 'Science Lab' },
-    { id: 'room_103', name: 'Room 103' },
-    { id: 'ssg_office', name: 'SSG Office' },
-    { id: 'room_104', name: 'Room 104' },
-    { id: 'room_105', name: 'Room 105' },
-    { id: 'guidance_office', name: 'Guidance Office' },
-    { id: 'clinic', name: 'Clinic' },
-    { id: 'chancellor_office', name: "Chancellor's Office" },
-    { id: 'finance', name: 'Finance Office' },
-    { id: 'registrar', name: "Registrar's Office" },
-    { id: 'hm_lab', name: 'HM Lab' },
-    { id: 'hot_kitchen', name: 'Hot Kitchen' },
-    { id: 'hs_room_102', name: 'HS Room 102' },
-    { id: 'hs_room_103', name: 'HS Room 103' },
-    { id: 'hs_room_104', name: 'HS Room 104' },
-    { id: 'hs_room_105', name: 'HS Room 105' },
-    { id: 'canteen', name: 'Canteen' },
-    { id: 'chapel', name: 'Chapel' }
+    // Ground Floor
+    { id: 'room_101', name: 'Room 101', floor: 'ground' },
+    { id: 'room_102', name: 'Room 102', floor: 'ground' },
+    { id: 'science_lab', name: 'Science Lab', floor: 'ground' },
+    { id: 'room_103', name: 'Room 103', floor: 'ground' },
+    { id: 'ssg_office', name: 'SSG Office', floor: 'ground' },
+    { id: 'room_104', name: 'Room 104', floor: 'ground' },
+    { id: 'room_105', name: 'Room 105', floor: 'ground' },
+    { id: 'guidance_office', name: 'Guidance Office', floor: 'ground' },
+    { id: 'clinic', name: 'Clinic', floor: 'ground' },
+    { id: 'chancellor_office', name: "Chancellor's Office", floor: 'ground' },
+    { id: 'finance', name: 'Finance Office', floor: 'ground' },
+    { id: 'registrar', name: "Registrar's Office", floor: 'ground' },
+    { id: 'hm_lab', name: 'HM Lab', floor: 'ground' },
+    { id: 'hot_kitchen', name: 'Hot Kitchen', floor: 'ground' },
+    { id: 'hs_room_102', name: 'HS Room 102', floor: 'ground' },
+    { id: 'hs_room_103', name: 'HS Room 103', floor: 'ground' },
+    { id: 'hs_room_104', name: 'HS Room 104', floor: 'ground' },
+    { id: 'hs_room_105', name: 'HS Room 105', floor: 'ground' },
+    { id: 'canteen', name: 'Canteen', floor: 'ground' },
+    { id: 'chapel', name: 'Chapel', floor: 'ground' },
+    // 2nd Floor
+    { id: 'room_201', name: 'Room 201', floor: '2nd' },
+    { id: 'hs_lab', name: 'HS Laboratory', floor: '2nd' },
+    { id: 'complab_1', name: 'Complab 1', floor: '2nd' },
+    { id: 'bsit_office', name: 'BSIT Department Office', floor: '2nd' },
+    { id: 'complab_2', name: 'Complab 2', floor: '2nd' },
+    { id: 'ted_faculty', name: 'Teacher Education Faculty Room', floor: '2nd' },
+    { id: 'hbe_faculty', name: 'Hospitality/Business Education  Faculty Room', floor: '2nd' },
+    { id: 'mic', name: 'Management Information Center', floor: '2nd' },
+    { id: 'deans_office', name: 'Dean’s Office', floor: '2nd' },
+    { id: 'outreach', name: 'Outreach Center', floor: '2nd' },
+    { id: 'cm_office', name: 'Campus Ministry Office', floor: '2nd' },
+    { id: 'aa_office', name: 'Academic Affairs Office', floor: '2nd' },
+    { id: 'research_office', name: 'Research, Accreditation and Quality Management Office', floor: '2nd' },
+    { id: 'be_faculty', name: 'Basic Education Faculty Room', floor: '2nd' },
+    { id: 'sisters_cloister', name: 'Sisters Cloister', floor: '2nd' },
+    { id: 'oratory', name: 'Oratory of St. Augustine and Monica', floor: '2nd' },
+    { id: 'hs_room_201', name: 'HS Room 201', floor: '2nd' },
+    { id: 'hs_room_202', name: 'HS Room 202', floor: '2nd' },
+    { id: 'hs_room_203', name: 'HS Room 203', floor: '2nd' },
+    { id: 'hs_room_204', name: 'HS Room 204', floor: '2nd' },
+    { id: 'hs_room_205', name: 'HS Room 205', floor: '2nd' },
+    { id: 'hs_room_206', name: 'HS Room 206', floor: '2nd' },
+    { id: 'hs_room_207', name: 'HS Room 207', floor: '2nd' },
+    // 3rd Floor
+    { id: 'room_301', name: 'Room 301', floor: '3rd' },
+    { id: 'room_302', name: 'Room 302', floor: '3rd' },
+    { id: 'room_303', name: 'Room 303', floor: '3rd' },
+    { id: 'room_304', name: 'Room 304', floor: '3rd' },
+    { id: 'sdc', name: 'Sports Development Office', floor: '3rd' },
+    { id: 'college_library', name: 'College Library', floor: '3rd' },
+    { id: 'bed_library', name: 'BED Library', floor: '3rd' },
   ];
 
   // Helper to get image file name from room name
   const getImageFileName = (roomName) => {
     // Map room names to image file names as needed
-    const map = {
+    const groundMap = {
       'Room 101': 'Room 101.png',
       'Room 102': 'Room 102.png',
       'Science Lab': 'Science Lab.png',
@@ -70,7 +103,44 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
       'Canteen': 'Canteen.png',
       'Chapel': 'Chapel.png',
     };
-    return map[roomName] || null;
+    const secondMap = {
+      'Room 201': 'Room 201.png',
+      'HS Laboratory': 'HS Lab.png',
+      'Complab 1': 'Complab 1.png',
+      'BSIT Department Office': 'BSIT Office.png',
+      'Complab 2': 'Complab 2.png',
+      'Teacher Education Faculty Room': 'TED Faculty Room.png',
+      'Hospitality/Business Education  Faculty Room': 'HBE Faculty Room.png',
+      'Management Information Center': 'MIC.png',
+      'Dean’s Office': 'Deans Office.png',
+      'Outreach Center': 'Outreach Center.png',
+      'Campus Ministry Office': 'CM Office.png',
+      'Academic Affairs Office': 'AA Office.png',
+      'Research, Accreditation and Quality Management Office': 'Research Office.png',
+      'Basic Education Faculty Room': 'BE Faculty Room.png',
+      'Sisters Cloister': 'Sisters Cloister.png',
+      'Oratory of St. Augustine and Monica': 'Oratory.png',
+      'HS Room 201': 'HS Room 201.png',
+      'HS Room 202': 'HS Room 202.png',
+      'HS Room 203': 'HS Room 203.png',
+      'HS Room 204': 'HS Room 204.png',
+      'HS Room 205': 'HS Room 205.png',
+      'HS Room 206': 'HS Room 206.png',
+      'HS Room 207': 'HS Room 207.png',
+    };
+    const thirdMap = {
+      'Room 301': 'Room 301.png',
+      'Room 302': 'Room 302.png',
+      'Room 303': 'Room 303.png',
+      'Room 304': 'Room 304.png',
+      'Sports Development Office': 'SDC.png',
+      'College Library': 'College Library.png',
+      'BED Library': 'BED Library.png',
+    };
+    if (groundMap[roomName]) return 'images/' + groundMap[roomName];
+    if (secondMap[roomName]) return 'images/2nd/' + secondMap[roomName];
+    if (thirdMap[roomName]) return 'images/3rd/' + thirdMap[roomName];
+    return null;
   };
 
   // QR Scanner effect (must be at top level)
@@ -121,31 +191,131 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
                 // ...existing code for icon selection...
                 let icon = (
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="8" width="16" height="10" rx="2" fill="#2980ff" />
+                    <rect x="4" y="8" width="16" height="10" rx="2" fill="#154084" />
                     <rect x="9" y="13" width="2" height="5" fill="#fff" />
                     <rect x="13" y="13" width="2" height="5" fill="#fff" />
                   </svg>
                 );
-                // ...existing code for icon overrides...
+                // Custom icon overrides for 2nd/3rd Floor and special rooms
+                                // Ball icon for Sports Development Office
+                                if (room.name === 'Sports Development Office') {
+                                  icon = (
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                      <circle cx="12" cy="12" r="10" fill="#154084" />
+                                      <path d="M12 2a10 10 0 0 1 0 20M2 12a10 10 0 0 1 20 0" stroke="#fff" strokeWidth="2" fill="none" />
+                                      <path d="M4 4l16 16M20 4L4 20" stroke="#fff" strokeWidth="2" fill="none" />
+                                    </svg>
+                                  );
+                                } else if (room.name === 'College Library' || room.name === 'BED Library') {
+                                  // Books icon
+                                  icon = (
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                      <rect x="3" y="6" width="6" height="14" rx="1" fill="#154084" />
+                                      <rect x="9" y="4" width="6" height="16" rx="1" fill="#154084" />
+                                      <rect x="15" y="2" width="6" height="18" rx="1" fill="#154084" />
+                                      <rect x="5" y="8" width="2" height="10" fill="#fff" />
+                                      <rect x="11" y="6" width="2" height="12" fill="#fff" />
+                                      <rect x="17" y="4" width="2" height="14" fill="#fff" />
+                                    </svg>
+                                  );
+                                }
+                // Nun icon for Sisters Cloister
+                if (room.name === 'Sisters Cloister') {
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="4" fill="#154084" />
+                      <ellipse cx="12" cy="16" rx="6" ry="5" fill="#154084" />
+                      <ellipse cx="12" cy="13" rx="3" ry="2" fill="#fff" />
+                      <rect x="10" y="10" width="4" height="3" fill="#fff" />
+                    </svg>
+                  );
+                } else if (room.name === 'Oratory of St. Augustine and Monica') {
+                  // Cross icon (reuse Chapel)
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="10" y="4" width="4" height="16" fill="#154084" />
+                      <rect x="4" y="10" width="16" height="4" fill="#154084" />
+                    </svg>
+                  );
+                } else if (
+                  room.name.includes('Faculty Room') ||
+                  room.name === 'Teacher Education Faculty Room' ||
+                  room.name === 'Hospitality/Business Education  Faculty Room' ||
+                  room.name === 'Basic Education Faculty Room'
+                ) {
+                  // Teacher/faculty icon
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="4" fill="#154084" />
+                      <rect x="7" y="14" width="10" height="6" rx="3" fill="#154084" />
+                      <rect x="10" y="20" width="4" height="2" fill="#154084" />
+                    </svg>
+                  );
+                } else if (
+                  room.name.includes('Office') ||
+                  room.name === 'Outreach Center' ||
+                  room.name === 'Academic Affairs Office' ||
+                  room.name === 'Research, Accreditation and Quality Management Office' ||
+                  room.name === 'Campus Ministry Office'
+                ) {
+                  // Briefcase/office icon
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="8" width="16" height="10" rx="2" fill="#154084" />
+                      <rect x="8" y="6" width="8" height="4" rx="1" fill="#154084" />
+                      <rect x="10" y="2" width="4" height="4" rx="1" fill="#154084" />
+                    </svg>
+                  );
+                } else if (
+                  room.name === 'Complab 1' ||
+                  room.name === 'Complab 2' ||
+                  room.name === 'HS Laboratory'
+                ) {
+                  // Computer icon
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="6" width="18" height="10" rx="2" fill="#154084" />
+                      <rect x="7" y="18" width="10" height="2" fill="#154084" />
+                      <rect x="9" y="20" width="6" height="1" fill="#154084" />
+                    </svg>
+                  );
+                } else if (room.name === 'Management Information Center') {
+                  // Multimedia icon (play button in a screen)
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="6" width="16" height="10" rx="2" fill="#154084" />
+                      <polygon points="11,9 16,12 11,15" fill="#fff" />
+                    </svg>
+                  );
+                } else if (room.name === 'Dean’s Office') {
+                  // Principal icon (reuse Chancellor's Office)
+                  icon = (
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="10" r="4" fill="#154084" />
+                      <rect x="7" y="16" width="10" height="4" rx="2" fill="#154084" />
+                      <rect x="9" y="5" width="6" height="2" fill="#222" />
+                    </svg>
+                  );
+                }
                 if (room.name === 'Chapel') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="10" y="4" width="4" height="16" fill="#2980ff" />
-                      <rect x="4" y="10" width="16" height="4" fill="#2980ff" />
+                      <rect x="10" y="4" width="4" height="16" fill="#154084" />
+                      <rect x="4" y="10" width="16" height="4" fill="#154084" />
                     </svg>
                   );
                 } else if (room.name === 'Finance Office') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="7" width="18" height="10" rx="2" fill="#2980ff" />
+                      <rect x="3" y="7" width="18" height="10" rx="2" fill="#154084" />
                       <circle cx="12" cy="12" r="3" fill="#fff" />
-                      <text x="12" y="14" textAnchor="middle" fontSize="6" fill="#2980ff" fontFamily="Arial">₱</text>
+                      <text x="12" y="14" textAnchor="middle" fontSize="6" fill="#154084" fontFamily="Arial">₱</text>
                     </svg>
                   );
                 } else if (room.name === "Registrar's Office") {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="5" y="4" width="14" height="16" rx="2" fill="#2980ff" />
+                      <rect x="5" y="4" width="14" height="16" rx="2" fill="#154084" />
                       <rect x="7" y="8" width="10" height="2" fill="#fff" />
                       <rect x="7" y="12" width="7" height="2" fill="#fff" />
                     </svg>
@@ -153,45 +323,45 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
                 } else if (room.name === "Chancellor's Office") {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="12" cy="10" r="4" fill="#2980ff" />
-                      <rect x="7" y="16" width="10" height="4" rx="2" fill="#2980ff" />
+                      <circle cx="12" cy="10" r="4" fill="#154084" />
+                      <rect x="7" y="16" width="10" height="4" rx="2" fill="#154084" />
                       <rect x="9" y="5" width="6" height="2" fill="#222" />
                     </svg>
                   );
                 } else if (room.name === 'Canteen') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="7" y="4" width="2" height="12" rx="1" fill="#2980ff" />
-                      <rect x="15" y="4" width="2" height="12" rx="1" fill="#2980ff" />
-                      <circle cx="8" cy="18" r="2" fill="#2980ff" />
-                      <circle cx="16" cy="18" r="2" fill="#2980ff" />
+                      <rect x="7" y="4" width="2" height="12" rx="1" fill="#154084" />
+                      <rect x="15" y="4" width="2" height="12" rx="1" fill="#154084" />
+                      <circle cx="8" cy="18" r="2" fill="#154084" />
+                      <circle cx="16" cy="18" r="2" fill="#154084" />
                     </svg>
                   );
                 } else if (room.name === 'Hot Kitchen') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="6" y="14" width="12" height="4" rx="2" fill="#2980ff" />
-                      <path d="M9 14V10M12 14V8M15 14V12" stroke="#2980ff" strokeWidth="2" strokeLinecap="round" />
+                      <rect x="6" y="14" width="12" height="4" rx="2" fill="#154084" />
+                      <path d="M9 14V10M12 14V8M15 14V12" stroke="#154084" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   );
                 } else if (room.name === 'Clinic') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="10" y="6" width="4" height="12" fill="#2980ff" />
-                      <rect x="6" y="10" width="12" height="4" fill="#2980ff" />
+                      <rect x="10" y="6" width="4" height="12" fill="#154084" />
+                      <rect x="6" y="10" width="12" height="4" fill="#154084" />
                     </svg>
                   );
                 } else if (room.name === 'Guidance Office') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <ellipse cx="12" cy="12" rx="8" ry="6" fill="#2980ff" />
+                      <ellipse cx="12" cy="12" rx="8" ry="6" fill="#154084" />
                     </svg>
                   );
                 } else if (room.name === 'Science Lab') {
                   icon = (
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="10" y="4" width="4" height="8" fill="#2980ff" />
-                      <path d="M8 12c0 4 8 4 8 0" stroke="#2980ff" strokeWidth="2" fill="none" />
+                      <rect x="10" y="4" width="4" height="8" fill="#154084" />
+                      <path d="M8 12c0 4 8 4 8 0" stroke="#154084" strokeWidth="2" fill="none" />
                     </svg>
                   );
                 }
@@ -214,15 +384,26 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
         ) : null}
         {selectedRoom && (
           <div style={{textAlign: 'center', marginTop: '32px'}}>
+            <div style={{ fontWeight: 'bold', color: '#000', fontSize: '2em', letterSpacing: '1px', marginBottom: '8px' }}>
+              {selectedRoom.floor === '3rd' ? '3RD FLOOR' : selectedRoom.floor === '2nd' ? '2ND FLOOR' : 'GROUND FLOOR'}
+            </div>
             <h2 className="room-selection-title">{selectedRoom.name}</h2>
             <p className="room-selection-subtitle" style={{marginBottom: '18px'}}>Follow the red line to reach your destination.</p>
-            {(() => { const imgPath = process.env.PUBLIC_URL + '/images/' + getImageFileName(selectedRoom.name); console.log('Image path for selected room:', imgPath); return null; })()}
+            {(() => { const imgPath = process.env.PUBLIC_URL + '/' + getImageFileName(selectedRoom.name); console.log('Image path for selected room:', imgPath); return null; })()}
             {getImageFileName(selectedRoom.name) ? (
               <>
                 <img
-                  src={process.env.PUBLIC_URL + '/images/' + getImageFileName(selectedRoom.name)}
+                  src={process.env.PUBLIC_URL + '/' + getImageFileName(selectedRoom.name)}
                   alt={selectedRoom.name}
-                  style={{width: '320px', height: '320px', objectFit: 'contain', margin: '16px auto'}}
+                  style={{
+                    display: 'block',
+                    maxWidth: '100%',
+                    maxHeight: '60vh',
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    margin: '16px auto'
+                  }}
                   onError={e => {
                     e.target.style.display = 'none';
                     const errorMsg = 'Failed to load image: ' + e.target.src;
@@ -241,7 +422,7 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
               <button
                 className="room-back-btn"
                 style={{
-                  background: '#2980ff',
+                  background: '#154084',
                   color: '#fff',
                   border: 'none',
                   borderRadius: '5px',
@@ -259,30 +440,11 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
                   if (onBack) onBack();
                 }}
                 onMouseOver={e => e.currentTarget.style.background = '#1864ab'}
-                onMouseOut={e => e.currentTarget.style.background = '#2980ff'}
+                onMouseOut={e => e.currentTarget.style.background = '#154084'}
               >
                 Back to room selection
               </button>
-              <button
-                className="room-camera-btn"
-                style={{
-                  background: '#2980ff',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '5px',
-                  padding: '10px 20px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                  transition: 'background 0.2s',
-                  marginTop: '0'
-                }}
-                onClick={() => setShowQrScanner(true)}
-                onMouseOver={e => e.currentTarget.style.background = '#1864ab'}
-                onMouseOut={e => e.currentTarget.style.background = '#2980ff'}
-              >
-                Time Out
-              </button>
+              {/* Time Out button removed as requested */}
             </div>
             {/* Removed duplicate Back to room selection button */}
           </div>
