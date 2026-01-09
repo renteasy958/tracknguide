@@ -3,7 +3,8 @@ import { doc, setDoc, collection, addDoc, query, where, getDocs, updateDoc } fro
 import { db } from '../../firebase';
 import VisitorForm from './VisitorForm';
 import TimeOutForm from './TimeOutForm';
-// Removed TypeSelection, TeacherForm, StudentForm, RoomSelection
+import RoomSelection from './RoomSelection';
+// Removed TypeSelection, TeacherForm, StudentForm
 import '../styles/userPage.css';
 
 function UserPage() {
@@ -12,6 +13,8 @@ function UserPage() {
   const [step, setStep] = useState('loading'); // loading, form, registered
   const [userData, setUserData] = useState(null);
   const [visitRecorded, setVisitRecorded] = useState(false);
+  const [roomStep, setRoomStep] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   // Focus the hidden input on mount
   useEffect(() => {
@@ -60,56 +63,9 @@ function UserPage() {
       const studentDoc = userSnap.docs[0];
       const student = studentDoc.data();
       console.log('Found student:', student);
-      // Check today's visit
-      const today = new Date().toLocaleDateString();
-      const visitQ = query(collection(db, 'visits'), where('userId', '==', student.id), where('date', '==', today));
-      const visitSnap = await getDocs(visitQ);
-      if (visitSnap.empty) {
-        // Not timed in yet, record time-in
-        const visitData = {
-           userId: student.id,
-           name: student.name,
-           type: student.type || 'student',
-           course: student.course || null,
-           year: student.year || null,
-           department: student.department || null,
-           room: student.room || null,
-           timeIn: new Date().toISOString(),
-           timeInFormatted: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-           date: new Date().toLocaleDateString(),
-        };
-        console.log('About to write visit:', visitData);
-        try {
-          await addDoc(collection(db, 'visits'), visitData);
-          console.log('Visit written successfully');
-        } catch (addErr) {
-          console.error('Error writing visit:', addErr);
-          alert('Error writing visit: ' + addErr.message);
-          return;
-        }
-        alert('Time-in recorded for ' + student.name);
-      } else {
-        // Already timed in, check if timed out
-        const visitDoc = visitSnap.docs[0];
-        const visit = visitDoc.data();
-        if (visit.timeOut) {
-          alert('Already timed out for today.');
-        } else {
-          // Record time-out
-          try {
-            await updateDoc(doc(db, 'visits', visitDoc.id), {
-              timeOut: new Date().toISOString(),
-              timeOutFormatted: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            });
-            console.log('Time-out updated for visit:', visitDoc.id);
-          } catch (updateErr) {
-            console.error('Error updating time-out:', updateErr);
-            alert('Error updating time-out: ' + updateErr.message);
-            return;
-          }
-          alert('Time-out recorded for ' + student.name);
-        }
-      }
+      // Instead of recording time-in here, show room selection
+      setUserData(student);
+      setRoomStep(true);
     } catch (err) {
       console.error('Error processing scan:', err);
       alert('Error processing scan: ' + err.message);
@@ -136,13 +92,7 @@ function UserPage() {
       try {
         const parsed = JSON.parse(savedData);
         setUserData(parsed);
-        // Check if a visit was recorded in the last 5 minutes
-        const timeSinceLastVisit = lastVisitTime ? now - parseInt(lastVisitTime) : Infinity;
-        const fiveMinutes = 5 * 60 * 1000;
-        if (timeSinceLastVisit < fiveMinutes) {
-          setVisitRecorded(true);
-        }
-        setStep('registered');
+        setRoomStep(true);
       } catch (error) {
         console.error('Error loading saved data:', error);
         setStep('form');
@@ -189,12 +139,23 @@ function UserPage() {
     }
   };
 
+  const handleRoomSelect = (room) => {
+    setSelectedRoom(room);
+    // Add room to userData and record time in
+    if (userData) {
+      const updatedUser = { ...userData, room: room.name };
+      setUserData(updatedUser);
+      recordTimeIn(updatedUser, room.name);
+    }
+    // Stay on RoomSelection view (do not show success message)
+    setRoomStep(true);
+  };
 
   const handleRegistrationComplete = (data) => {
     console.log('Registration complete:', data);
     setUserData(data);
-    setStep('registered');
-    recordTimeIn(data);
+    setRoomStep(true); // Show room selection after registration
+    // Do not call recordTimeIn yet, wait for room selection
   };
 
   const handleReset = () => {
@@ -263,42 +224,12 @@ function UserPage() {
     );
   }
 
-  if (step === 'form') {
-    return <>{scannerInput}<VisitorForm onComplete={handleRegistrationComplete} /></>;
+  if (roomStep) {
+    return <RoomSelection onSelectRoom={handleRoomSelect} selectedRoom={selectedRoom} />;
   }
 
-  if (step === 'registered') {
-    return (
-      <>
-        {scannerInput}
-        <div className="user-page-success">
-          <div className="success-box">
-            <div className="success-icon">✓</div>
-            <h2 className="success-title">Welcome, {userData.name}!</h2>
-            <p className="success-message">Your time in has been recorded.</p>
-            {/* Only show visitor info after scan/time-in; student/teacher info removed */}
-            <div className="user-info">
-              <div className="info-row">
-                <span className="info-label">Type:</span>
-                <span className="info-value">{userData.type}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Time In:</span>
-                <span className="info-value">{new Date().toLocaleTimeString()}</span>
-              </div>
-            </div>
-            <button className="reset-btn" onClick={handleReset}>
-              Logout / New User
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-
+  // Do not show success message after room selection/time-in
 
   return null;
 }
-
 export default UserPage;
