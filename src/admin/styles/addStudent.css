@@ -1,0 +1,206 @@
+/* Header row for Add Student */
+.add-student-header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.add-student-btn {
+  padding: 8px 16px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.add-student-btn:hover {
+  background: #1251a3;
+}
+/* Add Student container and header alignment */
+/* Add Student container and header alignment */
+.add-student-container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #f4f6fa;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+.add-student-container h2 {
+  margin: 32px 0 0 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #222b45;
+  letter-spacing: 1px;
+  text-align: left;
+}
+/* Minimalist student list lines */
+.student-list-lines {
+  width: 100%;
+  max-width: 650px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.student-line {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 12px 8px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1.05rem;
+  background: transparent;
+  color: #222b45;
+  font-family: inherit;
+  gap: 12px;
+}
+.student-line:last-child {
+  border-bottom: none;
+}
+.student-line span {
+  flex: none;
+  min-width: 0;
+  padding-right: 8px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+}
+.student-name {
+  font-weight: 600;
+  color: #1976d2;
+  flex: 2 1 0;
+}
+.student-id {
+  color: #888;
+  flex: 1 1 0;
+}
+.student-email {
+  color: #444;
+  flex: 2 1 0;
+}
+.student-course {
+  color: #1976d2;
+  text-align: left;
+}
+.student-line.empty {
+  text-align: center;
+  color: #aaa;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+.add-student-container h2 {
+  margin: 32px 0 0 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #222b45;
+  letter-spacing: 1px;
+  text-align: left;
+}
+.add-student-form label {
+  display: block;
+  margin-bottom: 14px;
+  font-weight: 500;
+  color: #333;
+}
+.add-student-form input, .add-student-form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+}
+.add-student-form input:focus, .add-student-form select:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+.add-student-form button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #1976d2 60%, #1565c0 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.add-student-form button:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+}
+.success-message {
+  color: #388e3c;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.08rem;
+}
+
+/* Table styles for professional look and fit */
+table {
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+  table-layout: fixed;
+}
+thead tr {
+  background: none;
+  color: #222b45;
+  border-bottom: 1.5px solid #e0e0e0;
+}
+th, td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #ececec;
+  text-align: left;
+  font-size: 1rem;
+  background: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+tbody tr:last-child td {
+  border-bottom: none;
+}
+tbody tr:hover {
+  background: #f7fafd;
+}
+@media (max-width: 900px) {
+  .add-student-container {
+    padding: 0 2vw;
+  }
+  table {
+    font-size: 0.95rem;
+  }
+  th, td {
+    padding: 10px 6px;
+  }
+}

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import QrPage from './QrPage';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
 import './App.css';
 import Sidebar from './admin/components/Sidebar';
 import Home from './admin/components/Home';
 import QRCode from './admin/components/QRCode';
+import QRScanner from './admin/components/QRScanner';
 import QRForm from './admin/components/QRForm';
+import AddStudent from './admin/components/AddStudent';
+import TeacherPage from './admin/components/TeacherPage';
 import History from './admin/components/History';
 import Login from './admin/components/Login';
 import UserPage from './user/components/UserPage';
@@ -16,6 +20,8 @@ function AdminApp() {
   const [currentPage, setCurrentPage] = useState('home');
   const [visits, setVisits] = useState([]);
   const [loading, setLoading] = useState(true);
+  // State for scanned QR data
+  const [scannedData, setScannedData] = useState('');
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
@@ -26,17 +32,11 @@ function AdminApp() {
   // Fetch real-time visits from Firestore
   useEffect(() => {
     const q = query(collection(db, 'visits'), orderBy('timeIn', 'desc'));
-    
     const unsubscribe = onSnapshot(q, (snapshot) => {
       console.log('Visits snapshot received, total documents:', snapshot.docs.length);
       const visitsData = snapshot.docs.map(doc => {
         const data = doc.data();
-        console.log('Visit document:', doc.id, {
-          name: data.name,
-          timeIn: data.timeIn,
-          timeOut: data.timeOut,
-          timeOutFormatted: data.timeOutFormatted
-        });
+        console.log('Visit document:', doc.id, data);
         return {
           id: doc.id,
           ...data,
@@ -50,10 +50,10 @@ function AdminApp() {
       setVisits(visitsData);
       setLoading(false);
     }, (error) => {
-      console.error('Error fetching visits:', error);
+      console.error('Error fetching visits from Firestore:', error);
+      alert('Error fetching visits from Firestore: ' + error.message);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -112,9 +112,17 @@ function AdminApp() {
     <div className="app-root">
       {currentPage !== 'qrform' && <Sidebar onNavigate={handleNavigate} onLogout={handleLogout} />}
       <main className="app-main">
-        {currentPage === 'home' && <Home visits={visits} />}
-        {currentPage === 'qrcode' && <QRCode onAddVisit={handleAddVisit} />}
+        {currentPage === 'home' && <Home visits={visits} scannedData={scannedData} />}
+        {currentPage === 'qrcode' && (
+          <>
+            <QRCode />
+            {/* Add QRScanner for demonstration, remove if not needed */}
+            <QRScanner setScannedData={setScannedData} />
+          </>
+        )}
         {currentPage === 'history' && <History visits={visits} />}
+        {currentPage === 'addstudent' && <AddStudent />}
+        {currentPage === 'teachers' && <TeacherPage />}
         {currentPage === 'qrform' && <QRForm onAddVisit={handleAddVisit} />}
       </main>
     </div>
@@ -129,6 +137,7 @@ function App() {
         <Route path="/" element={<UserPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/admin" element={<AdminApp />} />
+        <Route path="/qr/:userId" element={<QrPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

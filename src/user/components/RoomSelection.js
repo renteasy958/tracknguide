@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
 import '../styles/roomSelection.css';
 
 function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack }) {
@@ -21,6 +23,7 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
 
   const [showQrScanner, setShowQrScanner] = useState(false);
   const [qrError, setQrError] = useState('');
+  const [scannedStudent, setScannedStudent] = useState(null);
   const qrCodeScannerRef = useRef(null);
   const rooms = [
     // Ground Floor
@@ -152,10 +155,34 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
       html5QrCode.start(
         { facingMode: 'environment' },
         { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          alert('QR Code Scanned: ' + decodedText);
+        async (decodedText) => {
           setShowQrScanner(false);
           html5QrCode.stop().catch(()=>{});
+          // Try to parse QR data
+          let qrData;
+          try {
+            qrData = JSON.parse(decodedText);
+          } catch {
+            setQrError('Invalid QR code format.');
+            return;
+          }
+          if (!qrData.email) {
+            setQrError('QR code missing email.');
+            return;
+          }
+          // Fetch student from Firestore by email
+          try {
+            const q = query(collection(db, 'users'), where('email', '==', qrData.email));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+              setQrError('No student found for this QR code.');
+              return;
+            }
+            const student = querySnapshot.docs[0].data();
+            setScannedStudent(student);
+          } catch (err) {
+            setQrError('Error fetching student: ' + err.message);
+          }
         },
         (error) => {
           // Optionally handle scan errors
@@ -179,6 +206,17 @@ function RoomSelection({ onSelectRoom, selectedRoom: selectedRoomProp, onBack })
   return (
     <div className="room-selection-container">
       <div className="room-selection-box">
+        {qrError && <div style={{color: 'red', textAlign: 'center', marginBottom: 12}}>{qrError}</div>}
+        {scannedStudent && (
+          <div style={{background: '#e3f2fd', borderRadius: 8, padding: 20, marginBottom: 16}}>
+            <h3 style={{margin: 0, marginBottom: 8}}>Student Found</h3>
+            <div><b>Name:</b> {scannedStudent.name}</div>
+            <div><b>Email:</b> {scannedStudent.email}</div>
+            <div><b>Course:</b> {scannedStudent.course}</div>
+            <div><b>Year:</b> {scannedStudent.year}</div>
+            {/* You can add time in/out logic here, or call a prop/callback */}
+          </div>
+        )}
         {rooms.length === 0 && (
           <div style={{color: 'red', textAlign: 'center'}}>No rooms available.</div>
         )}

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import '../styles/home.css';
 import logo from '../images/lcc.png';
 
-export default function Home({ visits = [] }){
+export default function Home({ visits = [], scannedData }){
   const today = new Date();
+  // DEBUG: Log all visits received
+  console.log('Home received visits:', visits);
   const dateStr = today.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   // Helper to check if a visit is from today
@@ -25,7 +27,13 @@ export default function Home({ visits = [] }){
   const visitorsCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'visitor').length;
   const teachersCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'teacher').length;
   return (
-    <section className="home">
+    <>
+      {scannedData && (
+        <div style={{ background: '#e0ffe0', color: '#222', padding: '10px', margin: '10px', borderRadius: '6px', textAlign: 'center' }}>
+          <strong>Last Scanned QR Data:</strong> {scannedData}
+        </div>
+      )}
+      <section className="home">
       <div className="home__hero">
         <h1 className="home__title">LA CONSOLACION COLLEGE ISABELA</h1>
 
@@ -109,5 +117,6 @@ export default function Home({ visits = [] }){
         </div>
       </div>
     </section>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/sidebar.css';
 import { AiOutlineHome, AiOutlineHistory, AiOutlineEnvironment, AiOutlineSetting, AiOutlineQrcode } from 'react-icons/ai';
+import { FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';
 
 export default function Sidebar({ onNavigate, onLogout }){
   return (
@@ -19,7 +20,14 @@ export default function Sidebar({ onNavigate, onLogout }){
           <AiOutlineHistory className="sidebar-cedar__icon" />
           <span>History</span>
         </a>
-        {/* Maps link removed as requested */}
+        <a className="sidebar-cedar__link" href="#addstudent" onClick={e => { e.preventDefault(); onNavigate && onNavigate('addstudent'); }}>
+          <FaUserGraduate className="sidebar-cedar__icon" />
+          <span>Students</span>
+        </a>
+        <a className="sidebar-cedar__link" href="#teachers" onClick={e => { e.preventDefault(); onNavigate && onNavigate('teachers'); }}>
+          <FaChalkboardTeacher className="sidebar-cedar__icon" />
+          <span>Teachers</span>
+        </a>
         <button className="sidebar-cedar__link sidebar-cedar__logout-btn" onClick={onLogout}>
           <AiOutlineSetting className="sidebar-cedar__icon" />
           <span>Logout</span>
