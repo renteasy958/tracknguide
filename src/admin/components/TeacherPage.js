@@ -78,16 +78,21 @@ const TeacherPage = () => {
     const userId = `teacher_${Date.now()}`;
     const teacherData = {
       id: userId,
-      name: modalForm.name,
-      email: modalForm.email,
-      department: modalForm.department,
+      name: modalForm.name || '',
+      email: modalForm.email || '',
+      department: modalForm.department || '',
       type: 'teacher',
       registeredAt: new Date().toISOString()
     };
     try {
       await setDoc(doc(db, 'users', userId), teacherData);
       // Generate QR code data as JSON string for teacher
-      const qrData = JSON.stringify({ name: modalForm.name, type: 'teacher' });
+      const qrData = JSON.stringify({
+        name: modalForm.name,
+        email: modalForm.email,
+        type: 'teacher',
+        department: modalForm.department
+      });
       // Send to backend for QR email with QR data
       await fetch('http://localhost:5000/send-teacher-qr-link', {
         method: 'POST',

@@ -276,29 +276,12 @@ function UserPage() {
             <div className="success-icon">✓</div>
             <h2 className="success-title">Welcome, {userData.name}!</h2>
             <p className="success-message">Your time in has been recorded.</p>
+            {/* Only show visitor info after scan/time-in; student/teacher info removed */}
             <div className="user-info">
               <div className="info-row">
                 <span className="info-label">Type:</span>
                 <span className="info-value">{userData.type}</span>
               </div>
-              {userData.department && (
-                <div className="info-row">
-                  <span className="info-label">Department:</span>
-                  <span className="info-value">{userData.department}</span>
-                </div>
-              )}
-              {userData.course && (
-                <div className="info-row">
-                  <span className="info-label">Course:</span>
-                  <span className="info-value">{userData.course}</span>
-                </div>
-              )}
-              {userData.year && (
-                <div className="info-row">
-                  <span className="info-label">Year:</span>
-                  <span className="info-value">{userData.year}</span>
-                </div>
-              )}
               <div className="info-row">
                 <span className="info-label">Time In:</span>
                 <span className="info-value">{new Date().toLocaleTimeString()}</span>

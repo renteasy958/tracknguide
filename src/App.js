@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ScanProvider } from './ScanContext';
 import QrPage from './QrPage';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
@@ -33,10 +34,13 @@ function AdminApp() {
   useEffect(() => {
     const q = query(collection(db, 'visits'), orderBy('timeIn', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log('Visits snapshot received, total documents:', snapshot.docs.length);
+      console.log('[App.js] Firestore snapshot received, total documents:', snapshot.docs.length);
+      if (snapshot.docs.length === 0) {
+        console.warn('[App.js] No visits found in Firestore!');
+      }
       const visitsData = snapshot.docs.map(doc => {
         const data = doc.data();
-        console.log('Visit document:', doc.id, data);
+        console.log('[App.js] Visit document:', doc.id, data);
         return {
           id: doc.id,
           ...data,
@@ -46,11 +50,11 @@ function AdminApp() {
           room: data.room || '-'
         };
       });
-      console.log('Processed visits data:', visitsData);
+      console.log('[App.js] Processed visits data:', visitsData);
       setVisits(visitsData);
       setLoading(false);
     }, (error) => {
-      console.error('Error fetching visits from Firestore:', error);
+      console.error('[App.js] Error fetching visits from Firestore:', error);
       alert('Error fetching visits from Firestore: ' + error.message);
       setLoading(false);
     });
@@ -109,23 +113,21 @@ function AdminApp() {
   }
 
   return (
-    <div className="app-root">
-      {currentPage !== 'qrform' && <Sidebar onNavigate={handleNavigate} onLogout={handleLogout} />}
-      <main className="app-main">
-        {currentPage === 'home' && <Home visits={visits} scannedData={scannedData} />}
-        {currentPage === 'qrcode' && (
-          <>
-            <QRCode />
-            {/* Add QRScanner for demonstration, remove if not needed */}
-            <QRScanner setScannedData={setScannedData} />
-          </>
-        )}
-        {currentPage === 'history' && <History visits={visits} />}
-        {currentPage === 'addstudent' && <AddStudent />}
-        {currentPage === 'teachers' && <TeacherPage />}
-        {currentPage === 'qrform' && <QRForm onAddVisit={handleAddVisit} />}
-      </main>
-    </div>
+    <ScanProvider>
+      <div className="app-root">
+        {currentPage !== 'qrform' && <Sidebar onNavigate={handleNavigate} onLogout={handleLogout} />}
+        <main className="app-main">
+          {currentPage === 'home' && <Home visits={visits} />}
+          {currentPage === 'qrcode' && <QRCode />}
+          {currentPage === 'history' && <History visits={visits} />}
+
+          {currentPage === 'addstudent' && <AddStudent />}
+          {currentPage === 'teachers' && <TeacherPage />}
+          {currentPage === 'qrform' && <QRForm onAddVisit={handleAddVisit} />}
+          {currentPage === 'qrscanner' && <QRScanner />}
+        </main>
+      </div>
+    </ScanProvider>
   );
 }
 

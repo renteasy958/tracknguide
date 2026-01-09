@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { collection, addDoc, query, orderBy, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
 // You need to install 'react-qr-reader' for this to work
 // npm install react-qr-reader
 import { QrReader } from 'react-qr-reader';
+import { ScanContext } from '../../ScanContext';
 
-export default function QRScanner({ setScannedData }) {
+export default function QRScanner() {
   const [scanResult, setScanResult] = useState('');
   const [status, setStatus] = useState('');
+  const { setScanned } = useContext(ScanContext);
 
 
   const handleResult = async (result, error) => {
@@ -15,13 +17,12 @@ export default function QRScanner({ setScannedData }) {
       const data = result?.text;
       console.log('[QRScanner] Scanned data:', data);
       setScanResult(data);
-      if (setScannedData) setScannedData(data); // Pass up
       setStatus('Processing...');
       try {
         // Assume QR code contains JSON: { name, type }
         const parsed = JSON.parse(data);
         const name = parsed.name;
-        const type = parsed.type || 'Student';
+        const type = (parsed.type || 'student').toLowerCase();
         if (!name) {
           setStatus('Invalid QR data: missing name');
           console.warn('[QRScanner] Invalid QR data, missing name:', parsed);
@@ -46,18 +47,25 @@ export default function QRScanner({ setScannedData }) {
           });
           setStatus('Time out registered!');
           console.log('[QRScanner] Time out registered for', name);
+          setScanned({ name, timeIn: activeVisit.data().timeIn });
         } else {
           // Register time in
-          const docRef = await addDoc(collection(db, 'visits'), {
+          const visitData = {
             name,
             type,
             timeIn: now.toISOString(),
             timeInFormatted: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             date: now.toLocaleDateString(),
-            timeOut: null
-          });
+            timeOut: null,
+            timeOutFormatted: null,
+            room: parsed.room || '-',
+            department: parsed.department || (type === 'teacher' ? (parsed.department || '-') : undefined)
+          };
+          console.log('[QRScanner] Writing visit to Firestore:', visitData);
+          const docRef = await addDoc(collection(db, 'visits'), visitData);
           setStatus('Time in registered!');
-          console.log('[QRScanner] Time in registered for', name, 'with doc id', docRef.id);
+          console.log('[QRScanner] Time in registered for', name, 'with doc id', docRef.id, 'data:', visitData);
+          setScanned({ name, timeIn: now.toISOString() });
         }
       } catch (err) {
         setStatus('Error: ' + err.message);

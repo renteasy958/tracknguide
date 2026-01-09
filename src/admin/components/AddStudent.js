@@ -81,10 +81,10 @@ const AddStudent = () => {
     const userId = `student_${Date.now()}`;
     const studentData = {
       id: userId,
-      name: modalForm.name,
-      email: modalForm.email,
-      course: modalForm.course,
-      year: modalForm.year,
+      name: modalForm.name || '',
+      email: modalForm.email || '',
+      course: modalForm.course || '',
+      year: modalForm.year || '',
       type: 'student',
       registeredAt: new Date().toISOString()
     };
@@ -103,9 +103,10 @@ const AddStudent = () => {
       // Generate QR code data as JSON string for student, including name, course, and year
       const qrData = JSON.stringify({
         name: modalForm.name,
+        email: modalForm.email,
+        type: 'student',
         course: modalForm.course,
-        year: modalForm.year,
-        type: 'student'
+        year: modalForm.year
       });
       // Validate required fields before sending email
       if (!modalForm.name || !modalForm.email) {

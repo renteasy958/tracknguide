@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { ScanContext } from '../../ScanContext';
 import '../styles/home.css';
 import logo from '../images/lcc.png';
 
-export default function Home({ visits = [], scannedData }){
+export default function Home({ visits = [] }){
+  const { scanned } = useContext(ScanContext);
   const today = new Date();
-  // DEBUG: Log all visits received
-  console.log('Home received visits:', visits);
-  const dateStr = today.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
   // Helper to check if a visit is from today
   function isToday(visit) {
     const raw = visit.timeInRaw || visit.timeIn;
@@ -19,30 +17,31 @@ export default function Home({ visits = [], scannedData }){
       visitDate.getDate() === today.getDate()
     );
   }
+  // ...existing code...
+  // Find the latest visit (most recent timeIn)
+  const latestVisit = visits && visits.length > 0 ? visits[0] : null;
+  // ...existing code...
 
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState('all');
   const todayVisits = visits.filter(isToday);
-  const filteredVisits = filter && filter !== 'all' ? todayVisits.filter(v => v.type && v.type.toLowerCase() === filter) : [];
+  const filteredVisits = filter && filter !== 'all' ? todayVisits.filter(v => v.type && v.type.toLowerCase() === filter) : todayVisits;
   const studentsCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'student').length;
   const visitorsCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'visitor').length;
   const teachersCount = todayVisits.filter(v => v.type && v.type.toLowerCase() === 'teacher').length;
   return (
     <>
-      {scannedData && (
-        <div style={{ background: '#e0ffe0', color: '#222', padding: '10px', margin: '10px', borderRadius: '6px', textAlign: 'center' }}>
-          <strong>Last Scanned QR Data:</strong> {scannedData}
-        </div>
-      )}
+      {/* ...existing code... */}
       <section className="home">
       <div className="home__hero">
         <h1 className="home__title">LA CONSOLACION COLLEGE ISABELA</h1>
+        {/* Sample: Show students if filter is 'student' */}
+        {/* Student sample list above table removed as requested */}
 
         <div className="home__logo" aria-hidden="true">
           <img src={logo} alt="LCC Isabela logo" />
         </div>
 
         <div className="home__meta">
-          <div className="home__date">{dateStr}</div>
           <div className="home__counts">
             <div className={`home__count${filter === 'student' ? ' home__count--active' : ''}`} onClick={() => setFilter('student')} style={{cursor:'pointer'}}>
               <div className="home__count-icon" aria-hidden="true">
@@ -96,7 +95,17 @@ export default function Home({ visits = [], scannedData }){
             </thead>
             <tbody>
               {filteredVisits.length === 0 ? (
-                <tr><td colSpan="5" style={{textAlign:'center',color:'#888'}}>No data to display</td></tr>
+                filter === 'student' ? (
+                  <tr className="home__row" style={{ color: '#888' }}>
+                    <td>Juan Dela Cruz</td>
+                    <td>student</td>
+                    <td>08:00 AM</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                ) : (
+                  <tr><td colSpan="5" style={{textAlign:'center',color:'#888'}}>No data to display</td></tr>
+                )
               ) : (
                 filteredVisits.map((v, i) => (
                   <tr key={i} className="home__row">
